@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quadratic Drill Master - Persiapan Masuk SMA</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- MathJax Configuration for Dynamic Rendering -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .heading-font {
+            font-family: 'Fredoka', sans-serif;
+        }
+        .math-font {
+            font-family: 'JetBrains Mono', monospace;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-[#F4FBF7] via-[#F0FDF4] to-[#EFF6FF] min-h-screen flex flex-col justify-between overflow-x-hidden select-none">
+
+    <!-- HEADER NAVIGATION BAR -->
+    <header class="bg-white/90 backdrop-blur-md border-b-4 border-[#10B981] py-3 px-6 flex justify-between items-center sticky top-0 z-40 shadow-sm">
+        <div class="flex items-center gap-3">
+            <div class="bg-emerald-100 p-2 rounded-xl text-emerald-600">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z"></path>
+                </svg>
+            </div>
+            <div>
+                <h1 class="heading-font text-xl md:text-2xl font-bold text-[#047857]">Quadratic Drill Master</h1>
+                <p class="text-[10px] text-emerald-600 font-bold tracking-widest uppercase">Persiapan Seleksi Masuk SMA Unggulan</p>
+            </div>
+        </div>
+        
+        <div class="flex items-center gap-2">
+            <!-- XP Badge -->
+            <div class="bg-amber-50 border-2 border-amber-300 rounded-xl px-3 py-1 flex items-center gap-1 shadow-sm">
+                <span class="text-sm">✨</span>
+                <span id="score-display" class="font-bold text-amber-800 text-xs md:text-sm">0 XP</span>
+            </div>
+            
+            <!-- Scratchpad Toggle -->
+            <button onclick="toggleScratchpad()" class="bg-[#EEF2FF] hover:bg-[#E0E7FF] border-2 border-[#6366F1] active:scale-95 transition text-[#4F46E5] font-bold rounded-xl px-3 py-1 text-xs md:text-sm shadow-sm flex items-center gap-1">
+                ✏️ <span class="hidden sm:inline">Papan Cakar</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- SCRATCHPAD DRAWING OVERLAY -->
+    <div id="scratchpad" class="hidden fixed inset-0 z-50 bg-white/95 flex flex-col p-4">
+        <div class="flex justify-between items-center mb-2 border-b-2 border-gray-100 pb-2">
+            <h3 class="heading-font text-lg font-bold text-[#4F46E5] flex items-center gap-2">
+                ✏️ Papan Cakar Corat-Coret Berhitung
+            </h3>
+            <div class="flex items-center gap-2">
+                <button onclick="clearCanvas()" class="bg-red-50 hover:bg-red-100 text-red-600 font-bold px-3 py-1.5 rounded-xl text-xs">Bersihkan</button>
+                <button onclick="toggleScratchpad()" class="bg-[#4F46E5] hover:bg-[#4338CA] text-white font-bold px-4 py-1.5 rounded-xl text-xs">Kembali</button>
+            </div>
+        </div>
+        <div class="flex-1 bg-amber-50/20 border-4 border-dashed border-[#818CF8] rounded-2xl relative cursor-crosshair overflow-hidden">
+            <canvas id="scratch-canvas" class="absolute inset-0 w-full h-full"></canvas>
+        </div>
+        <p class="text-xs text-gray-400 mt-2 text-center">Gunakan jari atau mouse di atas untuk coretan hitungan aljabar Anda.</p>
+    </div>
+
+    <!-- MAIN APP LAYOUT -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        <!-- LEFT PANEL: STATS & LIST OF 40 QUESTIONS (col-span-4) -->
+        <section class="lg:col-span-4 bg-white rounded-3xl border-4 border-[#A7F3D0] shadow-xl p-5 space-y-5">
+            <!-- Progress Tracker -->
+            <div>
+                <h3 class="heading-font text-base font-bold text-gray-700 mb-2 flex justify-between">
+                    <span>Analisis Misi</span>
+                    <span id="completion-text" class="text-emerald-600">0/40 Terjawab</span>
+                </h3>
+                <div class="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
+                    <div id="overall-progress" class="bg-gradient-to-r from-emerald-400 to-indigo-500 h-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+                <div class="grid grid-cols-3 gap-2 mt-3 text-center text-xs">
+                    <div class="bg-emerald-50 p-2 rounded-xl border border-emerald-100">
+                        <p class="text-gray-500 font-semibold">Benar</p>
+                        <p id="stats-correct" class="font-extrabold text-emerald-600 text-base">0</p>
+                    </div>
+                    <div class="bg-red-50 p-2 rounded-xl border border-red-100">
+                        <p class="text-gray-500 font-semibold">Salah</p>
+                        <p id="stats-wrong" class="font-extrabold text-red-500 text-base">0</p>
+                    </div>
+                    <div class="bg-indigo-50 p-2 rounded-xl border border-indigo-100">
+                        <p class="text-gray-500 font-semibold">Akurasi</p>
+                        <p id="stats-accuracy" class="font-extrabold text-indigo-600 text-base">0%</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category Filters -->
+            <div>
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Pilih Kategori</p>
+                <div class="grid grid-cols-1 gap-1.5">
+                    <button onclick="filterCategory('all')" id="btn-cat-all" class="cat-btn bg-emerald-500 text-white text-left px-3 py-2 rounded-xl text-xs font-bold border-2 border-emerald-500 transition-all">
+                        🌐 Semua Kategori (1-40)
+                    </button>
+                    <button onclick="filterCategory(1)" id="btn-cat-1" class="cat-btn bg-white hover:bg-gray-50 text-gray-700 text-left px-3 py-2 rounded-xl text-xs font-bold border-2 border-gray-200 transition-all">
+                        🟩 1. Fondasi Dasar (1-10)
+                    </button>
+                    <button onclick="filterCategory(2)" id="btn-cat-2" class="cat-btn bg-white hover:bg-gray-50 text-gray-700 text-left px-3 py-2 rounded-xl text-xs font-bold border-2 border-gray-200 transition-all">
+                        🟦 2. Teorema Vieta (11-20)
+                    </button>
+                    <button onclick="filterCategory(3)" id="btn-cat-3" class="cat-btn bg-white hover:bg-gray-50 text-gray-700 text-left px-3 py-2 rounded-xl text-xs font-bold border-2 border-gray-200 transition-all">
+                        🟨 3. Soal Penerapan (21-30)
+                    </button>
+                    <button onclick="filterCategory(4)" id="btn-cat-4" class="cat-btn bg-white hover:bg-gray-50 text-gray-700 text-left px-3 py-2 rounded-xl text-xs font-bold border-2 border-gray-200 transition-all">
+                        🟥 4. Advanced & HOTS (31-40)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Question Numbers Grid -->
+            <div>
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 flex justify-between">
+                    <span>Peta Soal</span>
+                    <span class="text-[10px] text-gray-400">Klik Nomor Untuk Lompat</span>
+                </p>
+                <div id="grid-numbers" class="grid grid-cols-5 gap-1.5 max-h-[190px] overflow-y-auto p-1 border rounded-xl bg-gray-50">
+                    <!-- Loaded dynamically in JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- RIGHT PANEL: CURRENT QUESTION CARDS (col-span-8) -->
+        <section class="lg:col-span-8 space-y-6">
+            <div class="bg-white rounded-3xl border-8 border-[#A7F3D0] shadow-xl overflow-hidden flex flex-col justify-between min-h-[480px]">
+                
+                <!-- Slide Header Banner -->
+                <div class="bg-emerald-50/50 border-b-2 border-emerald-100 px-6 py-4 flex justify-between items-center">
+                    <div>
+                        <span id="question-badge" class="bg-emerald-100 text-emerald-800 text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider">Kategori 1</span>
+                        <h2 id="question-header-title" class="heading-font text-lg md:text-xl font-bold text-slate-800 mt-1">Soal No. 1</h2>
+                    </div>
+                    <span id="question-points" class="bg-indigo-100 text-indigo-800 text-xs font-bold px-3 py-1 rounded-lg">+10 XP</span>
+                </div>
+
+                <!-- Slide Content & Formulas -->
+                <div class="p-6 md:p-8 flex-1 flex flex-col justify-center">
+                    <p id="question-text" class="text-base md:text-lg text-slate-700 leading-relaxed font-semibold mb-6">
+                        Tentukan himpunan penyelesaian dari persamaan kuadrat...
+                    </p>
+
+                    <!-- Multiple Choices Options container -->
+                    <div id="choices-container" class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
+                        <!-- Loaded dynamically -->
+                    </div>
+
+                    <!-- Discussion / Explanation Block -->
+                    <div id="discussion-panel" class="hidden bg-indigo-50/70 border-l-4 border-indigo-500 rounded-r-xl p-5 space-y-3 transition-all">
+                        <h4 class="font-black text-indigo-900 flex items-center gap-2 text-sm">
+                            💡 Pembahasan Langkah Demi Langkah:
+                        </h4>
+                        <div id="discussion-text" class="text-xs md:text-sm text-indigo-950 leading-relaxed space-y-2">
+                            <!-- Filled dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Navigation -->
+                <div class="bg-emerald-50 border-t-2 border-[#D1FAE5] px-6 py-4 flex justify-between items-center">
+                    <button onclick="navigateQuestion(-1)" id="prev-btn" class="bg-white hover:bg-[#ECFDF5] text-emerald-600 font-bold px-4 py-2 rounded-xl text-xs md:text-sm border border-emerald-200 transition active:scale-95">
+                        ◀ Sebelumnya
+                    </button>
+                    <div class="text-xs font-bold text-slate-500">
+                        <span id="active-index">1</span> / 40 Soal
+                    </div>
+                    <button onclick="navigateQuestion(1)" id="next-btn" class="bg-white hover:bg-[#ECFDF5] text-emerald-600 font-bold px-4 py-2 rounded-xl text-xs md:text-sm border border-emerald-200 transition active:scale-95">
+                        Selanjutnya ▶
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FLOATING TOAST NOTIFICATION -->
+    <div id="toast" class="hidden fixed bottom-12 left-1/2 transform -translate-x-1/2 z-50 bg-[#10B981] text-white font-bold px-6 py-3 rounded-2xl shadow-xl flex items-center gap-2 animate-bounce">
+        <span id="toast-icon">✨</span> <span id="toast-text">Luar biasa! Jawabanmu benar!</span>
+    </div>
+
+    <!-- CONFETTI CELEBRATION CANVAS -->
+    <canvas id="confetti" class="fixed inset-0 pointer-events-none z-50 w-full h-full hidden"></canvas>
+
+    <footer class="bg-white border-t border-gray-100 py-3 text-center text-[10px] text-gray-400 font-bold">
+        Quadratic Drill Master © 2026 • Kurikulum Nasional & Tes Masuk SMA Unggulan
+    </footer>
+
+    <!-- MAIN SYSTEM SCRIPTS -->
+    <script>
+        // --- 1. SOAL DATABASE (40 DRILLS) ---
+        const questionsDb = [
+            // KATEGORI 1 (1-10)
+            {
+                id: 1,
+                category: 1,
+                catName: "Fondasi Dasar",
+                points: 10,
+                text: "Tentukan himpunan penyelesaian dari persamaan kuadrat:\n$$x^2 - 5x - 24 = 0$$",
+                choices: [
+                    { key: "A", text: "$HP = \\{3, -8\\}$" },
+                    { key: "B", text: "$HP = \\{-3, 8\\}$", isCorrect: true },
+                    { key: "C", text: "$HP = \\{-3, -8\\}$" },
+                    { key: "D", text: "$HP = \\{3, 8\\}$" }
+                ],
+                discussion: "Faktorkan bentuk $x^2 - 5x - 24 = 0$. Cari dua angka yang hasil kalinya $-24$ dan jumlahnya $-5$. Angka tersebut adalah $-8$ dan $+3$.<br>$$(x - 8)(x + 3) = 0 \\implies x_1 = 8 \\text{ atau } x_2 = -3$$<br>Maka, himpunan penyelesaiannya adalah $HP = \\{-3, 8\\}$."
+            },
+            {
+                id: 2,
+                category: 1,
+                catName: "Fondasi Dasar",
+                points: 10,
+                text: "Jika salah satu akar dari persamaan kuadrat $2x^2 + px - 15 = 0$ adalah $x = 3$, tentukan nilai $p$ dan akar yang lainnya!",
+                choices: [
+                    { key: "A", text: "$p = 1$ dan akar lainnya $x = 2,5$" },
+                    { key: "B", text: "$p = -1$ dan akar lainnya $x = -2,5$", isCorrect: true },
+                    { key: "C", text: "$p = -1$ dan akar lainnya $x = -5$" },
+                    { key: "D", text: "$p = 2$ dan akar lainnya $x = -3$" }
+                ],
+                discussion: "Substitusi nilai $x = 3$ ke persamaan:<br>$$2(3)^2 + p(3) - 15 = 0 \\implies 18 + 3p - 15 = 0 \\implies 3p = -3 \\implies p = -1$$<br>Persamaan menjadi $2x^2 - x - 15 = 0$. Jika difaktorkan:<br>$$(2x + 5)(x - 3) = 0 \\implies x = -\\frac{5}{2} = -2,5 \\text{ atau } x = 3$$"
+            },
+            {
+                id: 3,
+                category: 1,
+                catName: "Fondasi Dasar",
+                points: 10,
+                text: "Persamaan kuadrat $x^2 - (k+2)x + (2k+1) = 0$ memiliki akar-akar kembar (real dan sama). Tentukan nilai $k$ yang memenuhi!",
+                choices: [
+                    { key: "A", text: "$k = 0$ atau $k = -4$" },
+                    { key: "B", text: "$k = 2$ atau $k = 4$" },
+                    { key: "C", text: "$k = 0$ atau $k = 4$", isCorrect: true },
+                    { key: "D", text: "$k = -2$ atau $k = 2$" }
+                ],
+                discussion: "Akar kembar mensyaratkan Diskriminan $D = b^2 - 4ac = 0$.<br>Diketahui $a = 1, b = -(k+2), c = 2k+1$.<br>$$D = (-(k+2))^2 - 4(1)(2k+1) = 0$$<br>$$(k^2 + 4k + 4) - (8k + 4) = 0 \\implies k^2 - 4k = 0 \\implies k(k - 4) = 0$$<br>Maka $k = 0$ atau $k = 4$."
+            },
+            {
+                id: 4,
+                category: 1,
+                catName: "Fondasi Dasar",
+                points: 10,
+                text: "Selidiki jenis akar-akar dari persamaan kuadrat berikut tanpa menyelesaikan persamaannya terlebih dahulu:\n$$3x^2 - 4x + 5 = 0$$",
+                choices: [
+                    { key: "A", text: "Real dan Berbeda" },
+                    { key: "B", text: "Real dan Kembar" },
+                    { key: "C", text: "Tidak Real (Imajiner)", isCorrect: true },
+                    { key: "D", text: "Real, Rasional, dan Berbeda" }
+                ],
+                discussion: "Hitung nilai Diskriminan ($D$) menggunakan rumus $D = b^2 - 4ac$ dengan $a = 3, b = -4, c = 5$:<br>$$D = (-4)^2 - 4(3)(5) = 16 - 60 = -44$$<br>Karena $D < 0$, maka persamaan tersebut tidak memiliki akar real (**Imajiner / Khayal**)."
+            },
+            {
+                id: 5,
+                category: 1,
+                catName: "Fondasi Dasar",
+                points: 10,
+                text: "Jika persamaan kuadrat $x^2 - mx + (m+3) = 0$ tidak memiliki akar real, tentukan batasan nilai $m$ yang memenuhi!",
+                choices: [
+                    { key: "A", text: "$m < -2$ atau $m > 6$" },
+                    { key: "B", text: "$-2 < m < 6$", isCorrect: true },
+                    { key: "C", text: "$-6 < m < 2$" },
+                    { key: "D", text: "$-2 \\le m \\le 6$" }
+                ],
+                discussion: "Syarat tidak memiliki akar real adalah $D < 0$.<br>Dengan $a = 1, b = -m, c = m+3$:<br>$$D = (-m)^2 - 4(1)(m+3) < 0 \\implies m^2 - 4m - 12 < 0$$<br>Faktorkan persamaan pembatasnya: $(m - 6)(m + 2) < 0$.<br>Dengan garis bilangan didapatkan daerah penyelesaian: $-2 < m < 6$."
+            },
+            {
+                id: 6,
+                category: 1,
+                catName: "Fondasi Dasar",
+                points: 10,
+                text: "Sederhanakan bentuk pecahan aljabar berikut menggunakan prinsip pemfaktoran persamaan kuadrat:\n$$\\frac{x^2 - x - 12}{x^2 - 16}$$",
+                choices: [
+                    { key: "A", text: "$\\frac{x - 3}{x - 4}$" },
+                    { key: "B", text: "$\\frac{x + 3}{x - 4}$" },
+                    { key: "C", text: "$\\frac{x + 3}{x + 4}$", isCorrect: true },
+                    { key: "D", text: "$\\frac{x - 3}{x + 4}$" }
+                ],
+                discussion: "Faktorkan pembilang dan penyebut terlebih dahulu:<br>• Pembilang: $x^2 - x - 12 = (x - 4)(x + 3)$<br>• Penyebut: $x^2 - 16 = (x - 4)(x + 4)$<br>Masukkan ke dalam pecahan:<br>$$\\frac{(x - 4)(x + 3)}{(x - 4)(x + 4)} = \\frac{x + 3}{x + 4} \\quad (\\text{untuk } x \\ne 4)$$"
+            },
+            {
+                id: 7,
+                category: 1,
+                catName: "Fondasi Dasar",
+                points: 10,
+                text: "Tentukan nilai akar-akar dari persamaan kuadrat berikut menggunakan metode melengkapkan kuadrat sempurna:\n$$x^2 + 6x - 7 = 0$$",
+                choices: [
+                    { key: "A", text: "$x = -1$ atau $x = 7$" },
+                    { key: "B", text: "$x = 1$ atau $x = -7$", isCorrect: true },
+                    { key: "C", text: "$x = 1$ atau $x = 7$" },
+                    { key: "D", text: "$x = -1$ atau $x = -7$" }
+                ],
+                discussion: "Pindahkan konstanta ke ruas kanan:<br>$$x^2 + 6x = 7$$<br>Tambahkan kedua ruas dengan $\\left(\\frac{b}{2}\\right)^2 = 3^2 = 9$:<br>$$x^2 + 6x + 9 = 7 + 9 \\implies (x + 3)^2 = 16$$<br>Tarik akar kuadrat:<br>$$x + 3 = \\pm 4 \\implies x_1 = 4 - 3 = 1 \\quad \\text{atau} \\quad x_2 = -4 - 3 = -7$$"
+            },
+            {
+                id: 8,
+                category: 1,
+                catName: "Fondasi Dasar",
+                points: 10,
+                text: "Diketahui persamaan kuadrat $2x^2 - 7x + 3 = 0$. Berapakah nilai dari diskriminannya?",
+                choices: [
+                    { key: "A", text: "25", isCorrect: true },
+                    { key: "B", text: "49" },
+                    { key: "C", text: "73" },
+                    { key: "D", text: "12" }
+                ],
+                discussion: "Diketahui $a = 2, b = -7, c = 3$.<br>Gunakan rumus Diskriminan ($D$):<br>$$D = b^2 - 4ac = (-7)^2 - 4(2)(3) = 49 - 24 = 25$$"
+            },
+            {
+                id: 9,
+                category: 1,
+                catName: "Fondasi Dasar",
+                points: 10,
+                text: "Tentukan konstanta $c$ agar persamaan $x^2 + 10x + c = 0$ dapat diubah menjadi bentuk kuadrat sempurna $(x+d)^2 = 0$.",
+                choices: [
+                    { key: "A", text: "10" },
+                    { key: "B", text: "5" },
+                    { key: "C", text: "25", isCorrect: true },
+                    { key: "D", text: "100" }
+                ],
+                discussion: "Sebuah bentuk kuadratik trinomial merupakan kuadrat sempurna jika konstanta $c = \\left(\\frac{b}{2}\\right)^2$.<br>Maka:<br>$$c = \\left(\\frac{10}{2}\\right)^2 = 5^2 = 25$$<br>Persamaan tersebut menjadi $x^2 + 10x + 25 = (x + 5)^2 = 0$."
+            },
+            {
+                id: 10,
+                category: 1,
+                catName: "Fondasi Dasar",
+                points: 10,
+                text: "Jika akar-akar dari $x^2 - 9 = 0$ adalah $x_1$ dan $x_2$, tentukan nilai dari $x_1^2 + x_2^2$.",
+                choices: [
+                    { key: "A", text: "9" },
+                    { key: "B", text: "18", isCorrect: true },
+                    { key: "C", text: "0" },
+                    { key: "D", text: "81" }
+                ],
+                discussion: "Persamaan $x^2 - 9 = 0 \\implies (x - 3)(x + 3) = 0$.<br>Diperoleh akar-akar $x_1 = 3$ dan $x_2 = -3$.<br>$$x_1^2 + x_2^2 = (3)^2 + (-3)^2 = 9 + 9 = 18$$"
+            },
+
+            // KATEGORI 2 (11-20)
+            {
+                id: 11,
+                category: 2,
+                catName: "Teorema Vieta",
+                points: 10,
+                text: "Diketahui akar-akar persamaan $x^2 - 7x + 10 = 0$ adalah $\\alpha$ dan $\\beta$. Tanpa mencari nilai $\\alpha$ dan $\\beta$ secara langsung, tentukan nilai dari:\n$$\\frac{1}{\\alpha} + \\frac{1}{\\beta}$$",
+                choices: [
+                    { key: "A", text: "0,5" },
+                    { key: "B", text: "0,7", isCorrect: true },
+                    { key: "C", text: "1,4" },
+                    { key: "D", text: "1,0" }
+                ],
+                discussion: "Berdasarkan Teorema Vieta:<br>$$\\alpha + \\beta = -\\frac{b}{a} = 7 \\quad \\text{dan} \\quad \\alpha \\cdot \\beta = \\frac{c}{a} = 10$$<br>Maka, kita bisa menyamakan penyebut pecahan aljabar tersebut:<br>$$\\frac{1}{\\alpha} + \\frac{1}{\\beta} = \\frac{\\alpha + \\beta}{\\alpha \\cdot \\beta} = \\frac{7}{10} = 0,7$$"
+            },
+            {
+                id: 12,
+                category: 2,
+                catName: "Teorema Vieta",
+                points: 10,
+                text: "Jika $x_1$ dan $x_2$ adalah akar-akar dari $2x^2 - 5x - 4 = 0$, tentukan nilai dari $x_1^2 + x_2^2$.",
+                choices: [
+                    { key: "A", text: "6,25" },
+                    { key: "B", text: "10,25", isCorrect: true },
+                    { key: "C", text: "8,25" },
+                    { key: "D", text: "12,25" }
+                ],
+                discussion: "Berdasarkan Teorema Vieta:<br>$$x_1 + x_2 = \\frac{5}{2} \\quad \\text{dan} \\quad x_1 \\cdot x_2 = -2$$<br>Gunakan identitas aljabar:<br>$$x_1^2 + x_2^2 = (x_1 + x_2)^2 - 2x_1x_2 = \\left(\\frac{5}{2}\\right)^2 - 2(-2) = \\frac{25}{4} + 4 = 6,25 + 4 = 10,25$$"
+            },
+            {
+                id: 13,
+                category: 2,
+                catName: "Teorema Vieta",
+                points: 10,
+                text: "Akar-akar dari $x^2 + 6x - 3 = 0$ adalah $p$ dan $q$. Tentukan nilai dari $(p - q)^2$.",
+                choices: [
+                    { key: "A", text: "36" },
+                    { key: "B", text: "42" },
+                    { key: "C", text: "48", isCorrect: true },
+                    { key: "D", text: "54" }
+                ],
+                discussion: "Melalui teorema Vieta didapatkan $p + q = -6$ dan $pq = -3$.<br>Jabarkan bentuk $(p-q)^2$:<br>$$(p-q)^2 = p^2 - 2pq + q^2 = (p+q)^2 - 4pq$$<br>Substitusi nilai:<br>$$(p-q)^2 = (-6)^2 - 4(-3) = 36 + 12 = 48$$"
+            },
+            {
+                id: 14,
+                category: 2,
+                catName: "Teorema Vieta",
+                points: 10,
+                text: "Jika $x_1$ dan $x_2$ adalah akar-akar persamaan $x^2 - 8x + 12 = 0$, susunlah persamaan kuadrat baru yang akar-akarnya adalah $(x_1 + 2)$ dan $(x_2 + 2)$!",
+                choices: [
+                    { key: "A", text: "$x^2 - 12x + 32 = 0$", isCorrect: true },
+                    { key: "B", text: "$x^2 - 10x + 24 = 0$" },
+                    { key: "C", text: "$x^2 - 12x + 24 = 0$" },
+                    { key: "D", text: "$x^2 - 8x + 16 = 0$" }
+                ],
+                discussion: "Diketahui $x_1 + x_2 = 8$ dan $x_1 x_2 = 12$. Misal akar persamaan baru adalah $y_1 = x_1 + 2$ dan $y_2 = x_2 + 2$.<br>• Jumlah akar baru:<br>$$y_1 + y_2 = (x_1+2) + (x_2+2) = (x_1 + x_2) + 4 = 8 + 4 = 12$$<br>• Hasil kali akar baru:<br>$$y_1 y_2 = (x_1+2)(x_2+2) = x_1 x_2 + 2(x_1 + x_2) + 4 = 12 + 2(8) + 4 = 32$$<br>Persamaan kuadrat baru: $x^2 - 12x + 32 = 0$."
+            },
+            {
+                id: 15,
+                category: 2,
+                catName: "Teorema Vieta",
+                points: 10,
+                text: "Diketahui persamaan kuadrat $x^2 - (m-1)x + 64 = 0$. Jika salah satu akarnya merupakan kuadrat dari akar yang lain, berapakah nilai $m$ positif yang memenuhi?",
+                choices: [
+                    { key: "A", text: "$m = 17$" },
+                    { key: "B", text: "$m = 21$", isCorrect: true },
+                    { key: "C", text: "$m = 9$" },
+                    { key: "D", text: "$m = 25$" }
+                ],
+                discussion: "Misal akar-akarnya adalah $\\alpha$ dan $\\alpha^2$.<br>Berdasarkan hasil kali akar:<br>$$\\alpha \\cdot \\alpha^2 = 64 \\implies \\alpha^3 = 64 \\implies \\alpha = 4$$<br>Maka akar-akarnya adalah $4$ dan $4^2 = 16$.<br>Berdasarkan jumlah akar:<br>$$\\alpha + \\alpha^2 = m - 1 \\implies 4 + 16 = m - 1 \\implies m = 21$$"
+            },
+            {
+                id: 16,
+                category: 2,
+                catName: "Teorema Vieta",
+                points: 10,
+                text: "Diketahui akar-akar persamaan $3x^2 - 12x + 2 = 0$ adalah $x_1$ dan $x_2$. Nilai dari $x_1^3 + x_2^3$ adalah...",
+                choices: [
+                    { key: "A", text: "64" },
+                    { key: "B", text: "56", isCorrect: true },
+                    { key: "C", text: "48" },
+                    { key: "D", text: "72" }
+                ],
+                discussion: "Dari $3x^2 - 12x + 2 = 0$, diperoleh $x_1 + x_2 = 4$ dan $x_1 x_2 = \\frac{2}{3}$.<br>Gunakan identitas penjumlahan pangkat tiga:<br>$$x_1^3 + x_2^3 = (x_1 + x_2)^3 - 3x_1x_2(x_1 + x_2)$$<br>Substitusi nilai:<br>$$x_1^3 + x_2^3 = (4)^3 - 3\\left(\\frac{2}{3}\\right)(4) = 64 - 8 = 56$$"
+            },
+            {
+                id: 17,
+                category: 2,
+                catName: "Teorema Vieta",
+                points: 10,
+                text: "Susunlah persamaan kuadrat baru yang akar-akarnya adalah 3 kali dari akar-akar persamaan $x^2 - 5x + 6 = 0$.",
+                choices: [
+                    { key: "A", text: "$x^2 - 15x + 18 = 0$" },
+                    { key: "B", text: "$x^2 - 15x + 54 = 0$", isCorrect: true },
+                    { key: "C", text: "$x^2 - 5x + 18 = 0$" },
+                    { key: "D", text: "$x^2 - 15x + 36 = 0$" }
+                ],
+                discussion: "Akar-akar $x^2 - 5x + 6 = 0$ adalah $x_1 = 2$ dan $x_2 = 3$.<br>Akar baru adalah $y_1 = 3(2) = 6$ dan $y_2 = 3(3) = 9$.<br>Persamaan kuadrat baru:<br>$$(x - 6)(x - 9) = 0 \\implies x^2 - 15x + 54 = 0$$"
+            },
+            {
+                id: 18,
+                category: 2,
+                catName: "Teorema Vieta",
+                points: 10,
+                text: "Jika selisih akar-akar persamaan $x^2 - px + 12 = 0$ adalah 1, tentukan nilai $p$ yang mungkin!",
+                choices: [
+                    { key: "A", text: "$p = \\pm 5$" },
+                    { key: "B", text: "$p = \\pm 7$", isCorrect: true },
+                    { key: "C", text: "$p = \\pm 6$" },
+                    { key: "D", text: "$p = \\pm 8$" }
+                ],
+                discussion: "Rumus selisih akar:<br>$$|x_1 - x_2| = \\frac{\\sqrt{D}}{a} = 1$$<br>$$1 = \\frac{\\sqrt{p^2 - 4(1)(12)}}{1} \\implies 1 = p^2 - 48 \\implies p^2 = 49 \\implies p = \\pm 7$$"
+            },
+            {
+                id: 19,
+                category: 2,
+                catName: "Teorema Vieta",
+                points: 10,
+                text: "Diketahui akar-akar dari $x^2 - 4x + 1 = 0$ adalah $a$ dan $b$. Nilai dari $\\frac{a}{b} + \\frac{b}{a}$ adalah...",
+                choices: [
+                    { key: "A", text: "14", isCorrect: true },
+                    { key: "B", text: "16" },
+                    { key: "C", text: "18" },
+                    { key: "D", text: "12" }
+                ],
+                discussion: "Diketahui $a + b = 4$ dan $ab = 1$.<br>$$\\frac{a}{b} + \\frac{b}{a} = \\frac{a^2 + b^2}{ab} = \\frac{(a+b)^2 - 2ab}{ab} = \\frac{4^2 - 2(1)}{1} = 14$$"
+            },
+            {
+                id: 20,
+                category: 2,
+                catName: "Teorema Vieta",
+                points: 10,
+                text: "Jika $p$ dan $q$ adalah akar-akar dari persamaan $x^2 + \\sqrt{5}x - 2 = 0$, berapakah nilai dari $\\frac{1}{p^2} + \\frac{1}{q^2}$?",
+                choices: [
+                    { key: "A", text: "1,25" },
+                    { key: "B", text: "2,25", isCorrect: true },
+                    { key: "C", text: "3,25" },
+                    { key: "D", text: "0,25" }
+                ],
+                discussion: "Diketahui $p+q = -\\sqrt{5}$ dan $pq = -2$.<br>$$\\frac{1}{p^2} + \\frac{1}{q^2} = \\frac{p^2 + q^2}{(pq)^2} = \\frac{(p+q)^2 - 2pq}{(pq)^2} = \\frac{(-\\sqrt{5})^2 - 2(-2)}{(-2)^2} = \\frac{5 + 4}{4} = 2,25$$"
+            },
+
+            // KATEGORI 3 (21-30)
+            {
+                id: 21,
+                category: 3,
+                catName: "Soal Penerapan",
+                points: 10,
+                text: "Hasil kali dua bilangan bulat positif berurutan adalah 156. Tentukan kedua bilangan tersebut!",
+                choices: [
+                    { key: "A", text: "11 dan 12" },
+                    { key: "B", text: "12 dan 13", isCorrect: true },
+                    { key: "C", text: "13 dan 14" },
+                    { key: "D", text: "14 dan 15" }
+                ],
+                discussion: "Misal bilangan-bilangan tersebut adalah $x$ dan $x + 1$.<br>$$x(x + 1) = 156 \\implies x^2 + x - 156 = 0$$<br>Faktorkan:<br>$$(x + 13)(x - 12) = 0$$<br>Karena bilangan bulat positif, maka $x = 12$. Bilangan kedua adalah $12 + 1 = 13$."
+            },
+            {
+                id: 22,
+                category: 3,
+                catName: "Soal Penerapan",
+                points: 10,
+                text: "Sebuah segitiga siku-siku memiliki panjang sisi miring $(x + 5)$ cm. Jika dua sisi siku-sikunya memiliki panjang $x$ cm dan $(x + 3)$ cm, berapakah luas segitiga tersebut?",
+                choices: [
+                    { key: "A", text: "$(15 + 7\\sqrt{5})\\text{ cm}^2$", isCorrect: true },
+                    { key: "B", text: "$(10 + 5\\sqrt{5})\\text{ cm}^2$" },
+                    { key: "C", text: "$24\\text{ cm}^2$" },
+                    { key: "D", text: "$30\\text{ cm}^2$" }
+                ],
+                discussion: "Sesuai rumus Pythagoras:<br>$$x^2 + (x+3)^2 = (x+5)^2 \\implies x^2 + x^2 + 6x + 9 = x^2 + 10x + 25 \\implies x^2 - 4x - 16 = 0$$<br>Dengan rumus ABC, akar positifnya:<br>$$x = \\frac{4 + \\sqrt{16 - 4(1)(-16)}}{2} = 2 + 2\\sqrt{5}$$<br>Luas segitiga siku-siku:<br>$$Luas = \\frac{1}{2} \\cdot x(x+3) = \\frac{1}{2}(2+2\\sqrt{5})(5+2\\sqrt{5}) = 15 + 7\\sqrt{5}\\text{ cm}^2$$"
+            },
+            {
+                id: 23,
+                category: 3,
+                catName: "Soal Penerapan",
+                points: 10,
+                text: "Selembar karton berbentuk persegi panjang dengan keliling 70 cm dan luas $300\\text{ cm}^2$. Tentukan panjang dan lebar karton tersebut!",
+                choices: [
+                    { key: "A", text: "$25\\text{ cm}$ dan $10\\text{ cm}$" },
+                    { key: "B", text: "$20\\text{ cm}$ dan $15\\text{ cm}$", isCorrect: true },
+                    { key: "C", text: "$30\\text{ cm}$ dan $5\\text{ cm}$" },
+                    { key: "D", text: "$18\\text{ cm}$ dan $17\\text{ cm}$" }
+                ],
+                discussion: "Keliling $= 2(p+l) = 70 \\implies p + l = 35 \\implies l = 35 - p$.<br>Luas $= p \\cdot l = 300 \\implies p(35 - p) = 300 \\implies p^2 - 35p + 300 = 0$.<br>Faktorkan:<br>$$(p - 20)(p - 15) = 0 \\implies p = 20 \\text{ cm atau } l = 15 \\text{ cm}$$"
+            },
+            {
+                id: 24,
+                category: 3,
+                catName: "Soal Penerapan",
+                points: 10,
+                text: "Tinggi sebuah roket air $h$ (dalam meter) setelah diluncurkan selama $t$ detik dirumuskan oleh persamaan $h(t) = 40t - 5t^2$. Kapan roket tersebut mencapai ketinggian 60 meter?",
+                choices: [
+                    { key: "A", text: "3 atau 4 detik" },
+                    { key: "B", text: "2 atau 6 detik", isCorrect: true },
+                    { key: "C", text: "1 atau 12 detik" },
+                    { key: "D", text: "5 detik" }
+                ],
+                discussion: "Substitusikan $h(t) = 60$:<br>$$60 = 40t - 5t^2 \\implies 5t^2 - 40t + 60 = 0 \\implies t^2 - 8t + 12 = 0$$<br>Faktorkan:<br>$$(t - 2)(t - 6) = 0 \\implies t = 2 \\quad \\text{atau} \\quad t = 6 \\text{ detik}$$"
+            },
+            {
+                id: 25,
+                category: 3,
+                catName: "Soal Penerapan",
+                points: 10,
+                text: "Sebuah taman berbentuk persegi panjang berukuran $12\\text{ m} \\times 8\\text{ m}$ dikelilingi oleh jalan setapak dengan lebar $x$ meter di luarnya. Jika total luas taman beserta jalan adalah $165\\text{ m}^2$, berapakah lebar jalan setapak tersebut?",
+                choices: [
+                    { key: "A", text: "1 meter" },
+                    { key: "B", text: "1,5 meter", isCorrect: true },
+                    { key: "C", text: "2 meter" },
+                    { key: "D", text: "2,5 meter" }
+                ],
+                discussion: "Ukuran taman ditambah jalan adalah $(12 + 2x)$ dan $(8 + 2x)$.<br>$$(12 + 2x)(8 + 2x) = 165 \\implies 4x^2 + 40x + 96 = 165 \\implies 4x^2 + 40x - 69 = 0$$<br>Faktorkan:<br>$$(2x - 3)(2x + 23) = 0 \\implies x = 1,5\\text{ meter (karena lebar positif)}$$"
+            },
+            {
+                id: 26,
+                category: 3,
+                catName: "Soal Penerapan",
+                points: 10,
+                text: "Selisih dua buah bilangan adalah 5, sedangkan hasil kali kedua bilangan tersebut adalah 84. Tentukan jumlah dari kedua bilangan positif tersebut!",
+                choices: [
+                    { key: "A", text: "17" },
+                    { key: "B", text: "19", isCorrect: true },
+                    { key: "C", text: "21" },
+                    { key: "D", text: "23" }
+                ],
+                discussion: "Misal bilangan tersebut $a$ dan $b$. Diketahui $a - b = 5 \\implies a = b + 5$.<br>$$a \\cdot b = 84 \\implies (b + 5)b = 84 \\implies b^2 + 5b - 84 = 0$$<br>Faktorkan:<br>$$(b + 12)(b - 7) = 0 \\implies b = 7 \\text{ dan } a = 12$$<br>Jumlah kedua bilangan: $12 + 7 = 19$."
+            },
+            {
+                id: 27,
+                category: 3,
+                catName: "Soal Penerapan",
+                points: 10,
+                text: "Dua pipa pengisi air, jika dibuka bersama-sama, dapat mengisi kolam dalam waktu $3\\frac{3}{4}$ jam. Jika pipa kecil membutuhkan waktu 4 jam lebih lama daripada pipa besar untuk mengisi sendiri, berapa waktu yang dibutuhkan masing-masing pipa?",
+                choices: [
+                    { key: "A", text: "5 jam dan 9 jam" },
+                    { key: "B", text: "6 jam dan 10 jam", isCorrect: true },
+                    { key: "C", text: "8 jam dan 12 jam" },
+                    { key: "D", text: "4 jam dan 8 jam" }
+                ],
+                discussion: "Misal waktu pipa besar $= t$, maka pipa kecil $= t + 4$.<br>$$\\frac{1}{t} + \\frac{1}{t+4} = \\frac{4}{15} \\implies \\frac{2t+4}{t^2+4t} = \\frac{4}{15} \\implies 4t^2 - 14t - 60 = 0$$<br>Sederhanakan: $2t^2 - 7t - 30 = 0 \\implies (2t + 5)(t - 6) = 0$.<br>Maka pipa besar $= 6$ jam dan pipa kecil $= 10$ jam."
+            },
+            {
+                id: 28,
+                category: 3,
+                catName: "Soal Penerapan",
+                points: 10,
+                text: "Lintasan sebuah bola yang dilempar ke atas dimodelkan dengan $h(t) = -2t^2 + 12t + 3$. Tentukan tinggi maksimum yang dapat dicapai bola tersebut!",
+                choices: [
+                    { key: "A", text: "18 meter" },
+                    { key: "B", text: "21 meter", isCorrect: true },
+                    { key: "C", text: "24 meter" },
+                    { key: "D", text: "27 meter" }
+                ],
+                discussion: "Tinggi maksimum tercapai pada koordinat puncak sumbu simetri $t = -\\frac{b}{2a}$:<br>$$t_p = -\\frac{12}{2(-2)} = 3 \\text{ detik}$$<br>Substitusi $t = 3$ ke persamaan $h(t)$:<br>$$h(3) = -2(3)^2 + 12(3) + 3 = -18 + 36 + 3 = 21 \\text{ meter}$$"
+            },
+            {
+                id: 29,
+                category: 3,
+                catName: "Soal Penerapan",
+                points: 10,
+                text: "Suatu persegi panjang memiliki panjang $(3x - 1)$ cm dan lebar $(x + 2)$ cm. Jika luasnya adalah $66\\text{ cm}^2$, tentukan keliling persegi panjang tersebut!",
+                choices: [
+                    { key: "A", text: "30 cm" },
+                    { key: "B", text: "34 cm", isCorrect: true },
+                    { key: "C", text: "38 cm" },
+                    { key: "D", text: "42 cm" }
+                ],
+                discussion: "Luas $= p \\times l \\implies (3x - 1)(x + 2) = 66 \\implies 3x^2 + 5x - 2 = 66 \\implies 3x^2 + 5x - 68 = 0$.<br>Faktorkan:<br>$$(3x + 17)(x - 4) = 0 \\implies x = 4\\text{ cm}$$<br>Panjang $= 11\\text{ cm}$ dan Lebar $= 6\\text{ cm}$. Keliling $= 2(11+6) = 34\\text{ cm}$."
+            },
+            {
+                id: 30,
+                category: 3,
+                catName: "Soal Penerapan",
+                points: 10,
+                text: "Jumlah kuadrat dari tiga bilangan bulat positif yang berurutan adalah 110. Tentukan bilangan-bilangan tersebut!",
+                choices: [
+                    { key: "A", text: "4, 5, dan 6" },
+                    { key: "B", text: "5, 6, dan 7", isCorrect: true },
+                    { key: "C", text: "6, 7, dan 8" },
+                    { key: "D", text: "3, 4, dan 5" }
+                ],
+                discussion: "Misal tiga bilangan tersebut adalah $x-1$, $x$, dan $x+1$.<br>$$(x-1)^2 + x^2 + (x+1)^2 = 110 \\implies 3x^2 + 2 = 110 \\implies 3x^2 = 108 \\implies x^2 = 36$$<br>Diperoleh $x = 6$. Maka, ketiga bilangan tersebut adalah 5, 6, dan 7."
+            },
+
+            // KATEGORI 4 (31-40)
+            {
+                id: 31,
+                category: 4,
+                catName: "Advanced & HOTS",
+                points: 10,
+                text: "Sederhanakan bentuk ekspresi numerik berikut secara cepat menggunakan prinsip aljabar:\n$$\\frac{2026^2 - 2025^2}{2026 + 2025}$$",
+                choices: [
+                    { key: "A", text: "4051" },
+                    { key: "B", text: "1", isCorrect: true },
+                    { key: "C", text: "2" },
+                    { key: "D", text: "0" }
+                ],
+                discussion: "Gunakan identitas aljabar selisih kuadrat: $a^2 - b^2 = (a - b)(a + b)$.<br>Masukkan $a = 2026$ dan $b = 2025$:<br>$$\\frac{2026^2 - 2025^2}{2026 + 2025} = \\frac{(2026 - 2025)(2026 + 2025)}{2026 + 2025} = 2026 - 2025 = 1$$"
+            },
+            {
+                id: 32,
+                category: 4,
+                catName: "Advanced & HOTS",
+                points: 10,
+                text: "Jika diketahui nilai dari bentuk konstanta aljabar tak hingga berikut:\n$$x = \\sqrt{12 + \\sqrt{12 + \\sqrt{12 + \\dots}}}$$<br>Tentukan nilai dari $x$ positif!",
+                choices: [
+                    { key: "A", text: "3" },
+                    { key: "B", text: "4", isCorrect: true },
+                    { key: "C", text: "6" },
+                    { key: "D", text: "12" }
+                ],
+                discussion: "Kuadratkan kedua ruas persamaan:<br>$$x^2 = 12 + \\sqrt{12 + \\sqrt{12 + \\dots}} \\implies x^2 = 12 + x$$<br>Pindahkan ruas:<br>$$x^2 - x - 12 = 0 \\implies (x - 4)(x + 3) = 0$$<br>Karena bentuk akar real bernilai positif, didapatkan nilai $x = 4$."
+            },
+            {
+                id: 33,
+                category: 4,
+                catName: "Advanced & HOTS",
+                points: 10,
+                text: "Tentukan nilai $x$ real positif yang memenuhi persamaan pecahan berlanjut berikut:\n$$x = 2 + \\frac{3}{2 + \\frac{3}{2 + \\frac{3}{\\dots}}}$$",
+                choices: [
+                    { key: "A", text: "1" },
+                    { key: "B", text: "2" },
+                    { key: "C", text: "3", isCorrect: true },
+                    { key: "D", text: "5" }
+                ],
+                discussion: "Persamaan pecahan berlanjut tak hingga ini dapat direpresentasikan kembali sebagai:<br>$$x = 2 + \\frac{3}{x} \\implies x^2 = 2x + 3 \\implies x^2 - 2x - 3 = 0$$<br>Faktorkan:<br>$$(x - 3)(x + 1) = 0$$<br>Nilai positif $x$ yang memenuhi adalah $x = 3$."
+            },
+            {
+                id: 34,
+                category: 4,
+                catName: "Advanced & HOTS",
+                points: 10,
+                text: "Jika $x^2 - 4x + 1 = 0$, tentukan nilai dari bentuk eksponen pecahan berikut:\n$$x^2 + \\frac{1}{x^2}$$",
+                choices: [
+                    { key: "A", text: "14", isCorrect: true },
+                    { key: "B", text: "16" },
+                    { key: "C", text: "18" },
+                    { key: "D", text: "12" }
+                ],
+                discussion: "Bagi kedua ruas $x^2 - 4x + 1 = 0$ dengan $x$ (karena $x \\ne 0$):<br>$$x - 4 + \\frac{1}{x} = 0 \\implies x + \\frac{1}{x} = 4$$<br>Kuadratkan kedua ruas:<br>$$\\left(x + \\frac{1}{x}\\right)^2 = 4^2 \\implies x^2 + 2 + \\frac{1}{x^2} = 16 \\implies x^2 + \\frac{1}{x^2} = 14$$"
+            },
+            {
+                id: 35,
+                category: 4,
+                catName: "Advanced & HOTS",
+                points: 10,
+                text: "Tentukan semua nilai $x$ real yang memenuhi persamaan pangkat eksponen berikut:\n$$(x^2 - 5x + 5)^{x^2 - 9x + 20} = 1$$",
+                choices: [
+                    { key: "A", text: "$\\{4, 5\\}$" },
+                    { key: "B", text: "$\\{1, 4, 5\\}$" },
+                    { key: "C", text: "$\\{1, 2, 3, 4, 5\\}$", isCorrect: true },
+                    { key: "D", text: "$\\{2, 3, 4\\}$" }
+                ],
+                discussion: "Bentuk $f(x)^{g(x)} = 1$ memiliki tiga kemungkinan penyelesaian:<br>1. Pangkat $g(x) = 0$ dengan $f(x) \\ne 0$:<br>$$x^2 - 9x + 20 = 0 \\implies (x-4)(x-5) = 0 \\implies x = 4, 5$$<br>2. Basis $f(x) = 1$:<br>$$x^2 - 5x + 5 = 1 \\implies (x-4)(x-1) = 0 \\implies x = 1, 4$$<br>3. Basis $f(x) = -1$ dengan syarat $g(x)$ genap:<br>$$x^2 - 5x + 5 = -1 \\implies (x-2)(x-3) = 0 \\implies x = 2, 3$$<br>Cek pangkat: $g(2) = 6$ (genap) dan $g(3) = 2$ (genap).<br>Himpunan penyelesaian: $\\{1, 2, 3, 4, 5\\}$."
+            },
+            {
+                id: 36,
+                category: 4,
+                catName: "Advanced & HOTS",
+                points: 10,
+                text: "Jika persamaan $x^2 - px + q = 0$ memiliki akar-akar $\\tan 15^\\circ$ and $\\tan 30^\\circ$, tentukan hubungan matematis antara nilai $p$ dan $q$!",
+                choices: [
+                    { key: "A", text: "$p - q = 1$" },
+                    { key: "B", text: "$p + q = 1$", isCorrect: true },
+                    { key: "C", text: "$pq = 1$" },
+                    { key: "D", text: "$p^2 + q^2 = 1$" }
+                ],
+                discussion: "Gunakan rumus penjumlahan trigonometri:<br>$$\\tan(15^\\circ + 30^\\circ) = \\tan 45^\\circ = 1$$<br>$$\\frac{\\tan 15^\\circ + \\tan 30^\\circ}{1 - \\tan 15^\\circ \\cdot \\tan 30^\\circ} = 1$$<br>Menurut Teorema Vieta, $\\tan 15^\\circ + \\tan 30^\\circ = p$ dan $\\tan 15^\\circ \\cdot \\tan 30^\\circ = q$.<br>$$\\frac{p}{1 - q} = 1 \\implies p = 1 - q \\implies p + q = 1$$"
+            },
+            {
+                id: 37,
+                category: 4,
+                catName: "Advanced & HOTS",
+                points: 10,
+                text: "Tentukan jumlah semua solusi real dari persamaan yang melibatkan nilai mutlak berikut:\n$$x^2 - 3|x| - 10 = 0$$",
+                choices: [
+                    { key: "A", text: "3" },
+                    { key: "B", text: "5" },
+                    { key: "C", text: "0", isCorrect: true },
+                    { key: "D", text: "-3" }
+                ],
+                discussion: "Ingat bahwa $x^2 = |x|^2$. Persamaan menjadi:<br>$$|x|^2 - 3|x| - 10 = 0 \\implies (|x| - 5)(|x| + 2) = 0$$<br>Karena nilai mutlak $|x| \\ge 0$, maka $|x| = 5 \\implies x = 5$ atau $x = -5$.<br>Jumlah semua solusinya: $5 + (-5) = 0$."
+            },
+            {
+                id: 38,
+                category: 4,
+                catName: "Advanced & HOTS",
+                points: 10,
+                text: "Selesaikan persamaan kuadrat tak standar berikut untuk mendapatkan nilai $x$:\n$$\\left(\\frac{x}{x+1}\\right)^2 + \\left(\\frac{x}{x+1}\\right) - 6 = 0$$",
+                choices: [
+                    { key: "A", text: "$x = \\frac{3}{4}$ atau $x = 2$" },
+                    { key: "B", text: "$x = -\\frac{3}{4}$ atau $x = -2$", isCorrect: true },
+                    { key: "C", text: "$x = -3$ atau $x = 2$" },
+                    { key: "D", text: "$x = -\\frac{1}{2}$ atau $x = -3$" }
+                ],
+                discussion: "Misal $u = \\frac{x}{x+1}$. Persamaan berubah menjadi:<br>$$u^2 + u - 6 = 0 \\implies (u + 3)(u - 2) = 0 \\implies u = -3 \\text{ atau } u = 2$$<br>• Kasus 1: $\\frac{x}{x+1} = -3 \\implies x = -3x - 3 \\implies 4x = -3 \\implies x = -\\frac{3}{4}$<br>• Kasus 2: $\\frac{x}{x+1} = 2 \\implies x = 2x + 2 \\implies x = -2$"
+            },
+            {
+                id: 39,
+                category: 4,
+                catName: "Advanced & HOTS",
+                points: 10,
+                text: "Diketahui $a$ dan $b$ adalah akar-akar real dari persamaan $x^2 - 5x + 1 = 0$. Tentukan nilai dari:\n$$\\sqrt{a^2 + 1} \\cdot \\sqrt{b^2 + 1}$$",
+                choices: [
+                    { key: "A", text: "1" },
+                    { key: "B", text: "5", isCorrect: true },
+                    { key: "C", text: "25" },
+                    { key: "D", text: "10" }
+                ],
+                discussion: "Sebab $a$ akar dari $x^2 - 5x + 1 = 0 \\implies a^2 - 5a + 1 = 0 \\implies a^2 + 1 = 5a$.<br>Begitu juga dengan $b$, didapat $b^2 + 1 = 5b$.<br>$$\\sqrt{a^2 + 1} \\cdot \\sqrt{b^2 + 1} = \\sqrt{5a} \\cdot \\sqrt{5b} = \\sqrt{25ab} = 5\\sqrt{ab}$$<br>Dari teorema Vieta, $ab = 1$. Maka hasil akhirnya adalah $5\\sqrt{1} = 5$."
+            },
+            {
+                id: 40,
+                category: 4,
+                catName: "Advanced & HOTS",
+                points: 10,
+                text: "Jika $a + b = 5$ dan $a^2 + b^2 = 13$, susunlah persamaan kuadrat yang akar-akarnya adalah $a$ dan $b$!",
+                choices: [
+                    { key: "A", text: "$x^2 - 5x - 6 = 0$" },
+                    { key: "B", text: "$x^2 - 5x + 6 = 0$", isCorrect: true },
+                    { key: "C", text: "$x^2 + 5x + 6 = 0$" },
+                    { key: "D", text: "$x^2 - 13x + 5 = 0$" }
+                ],
+                discussion: "Gunakan identitas aljabar untuk mencari $ab$:<br>$$a^2 + b^2 = (a+b)^2 - 2ab \\implies 13 = 5^2 - 2ab \\implies 2ab = 25 - 13 = 12 \\implies ab = 6$$<br>Persamaan kuadrat baru:<br>$$x^2 - (a+b)x + ab = 0 \\implies x^2 - 5x + 6 = 0$$"
+            }
+        ];
+
+        // --- 2. APP STATE SYSTEM ---
+        let currentIdx = 0; // 0-based index
+        let score = 0;
+        let selectedCategory = 'all'; // 'all', 1, 2, 3, 4
+        const userAnswers = {}; // { qId: { selectedKey: string, isCorrect: boolean } }
+
+        // --- 3. WEB AUDIO SYNTHESIZER ---
+        let audioCtx;
+        function getAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        function playSound(type) {
+            try {
+                const ctx = getAudioContext();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                if (type === 'correct') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
+                    osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.1); // E5
+                    osc.frequency.setValueAtTime(783.99, ctx.currentTime + 0.2); // G5
+                    osc.frequency.setValueAtTime(1046.50, ctx.currentTime + 0.3); // C6
+                    gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+                    osc.start(ctx.currentTime);
+                    osc.stop(ctx.currentTime + 0.5);
+                } else if (type === 'wrong') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(180, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(90, ctx.currentTime + 0.35);
+                    gain.gain.setValueAtTime(0.08, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+                    osc.start(ctx.currentTime);
+                    osc.stop(ctx.currentTime + 0.4);
+                } else if (type === 'click') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(450, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(320, ctx.currentTime + 0.08);
+                    gain.gain.setValueAtTime(0.03, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+                    osc.start(ctx.currentTime);
+                    osc.stop(ctx.currentTime + 0.08);
+                }
+            } catch (e) {
+                console.log("Audio API not supported.");
+            }
+        }
+
+        // --- 4. ENGINE SETUP & INITIALIZATION ---
+        window.onload = function() {
+            renderNumbersGrid();
+            loadQuestion(0);
+            initScratchpad();
+        };
+
+        // Get questions filtered by current selectedCategory
+        function getFilteredQuestions() {
+            if (selectedCategory === 'all') {
+                return questionsDb;
+            }
+            return questionsDb.filter(q => q.category === selectedCategory);
+        }
+
+        // Render Sidebar question map buttons
+        function renderNumbersGrid() {
+            const gridContainer = document.getElementById('grid-numbers');
+            gridContainer.innerHTML = '';
+            
+            questionsDb.forEach((q, idx) => {
+                // Determine CSS style based on answers state
+                let bgStyle = 'bg-white hover:bg-gray-100 text-gray-700 border-gray-200';
+                if (userAnswers[q.id]) {
+                    if (userAnswers[q.id].isCorrect) {
+                        bgStyle = 'bg-emerald-500 text-white border-emerald-600';
+                    } else {
+                        bgStyle = 'bg-red-500 text-white border-red-600';
+                    }
+                }
+                
+                // Extra border accent for currently active question
+                const isCurrent = (questionsDb[currentIdx].id === q.id);
+                const activeRing = isCurrent ? 'ring-4 ring-indigo-500 font-extrabold scale-105 z-10' : '';
+
+                // Filter visibility (dim if not matching current category filter)
+                const isMatch = (selectedCategory === 'all' || q.category === selectedCategory);
+                const opacity = isMatch ? 'opacity-100' : 'opacity-30';
+
+                const btn = document.createElement('button');
+                btn.className = `border-2 p-2 rounded-xl text-xs font-bold transition-all flex flex-col items-center justify-center h-10 ${bgStyle} ${activeRing} ${opacity}`;
+                btn.innerHTML = `<span>${q.id}</span>`;
+                btn.onclick = () => {
+                    playSound('click');
+                    const realIdx = questionsDb.findIndex(item => item.id === q.id);
+                    loadQuestion(realIdx);
+                };
+                gridContainer.appendChild(btn);
+            });
+        }
+
+        // Render current question contents
+        function loadQuestion(index) {
+            if (index < 0 || index >= questionsDb.length) return;
+            currentIdx = index;
+
+            const q = questionsDb[currentIdx];
+
+            // Render basic text elements
+            document.getElementById('question-header-title').innerText = `Soal No. ${q.id}`;
+            document.getElementById('question-badge').innerText = `Kategori: ${q.catName}`;
+            document.getElementById('question-text').innerHTML = q.text.replace(/\n/g, '<br>');
+            document.getElementById('active-index').innerText = currentIdx + 1;
+
+            // Render Choice Buttons
+            const choicesContainer = document.getElementById('choices-container');
+            choicesContainer.innerHTML = '';
+
+            q.choices.forEach(c => {
+                const btn = document.createElement('button');
+                btn.id = `choice-${c.key}`;
+                btn.className = "w-full text-left p-4 rounded-2xl border-2 border-gray-200 hover:border-indigo-400 hover:bg-indigo-50/50 transition-all duration-200 active:scale-95 flex items-center gap-3";
+                
+                // Key Badge
+                const keyBadge = `<span class="bg-indigo-100 text-indigo-700 font-black px-2.5 py-1 rounded-lg text-xs">${c.key}</span>`;
+                btn.innerHTML = `${keyBadge} <span class="text-sm font-semibold text-slate-700">${c.text}</span>`;
+                
+                // Add event handler
+                btn.onclick = () => selectAnswer(c.key);
+                choicesContainer.appendChild(btn);
+            });
+
+            // Adjust navigation buttons state
+            document.getElementById('prev-btn').disabled = (currentIdx === 0);
+            document.getElementById('next-btn').disabled = (currentIdx === questionsDb.length - 1);
+            document.getElementById('prev-btn').style.opacity = (currentIdx === 0) ? "0.4" : "1";
+            document.getElementById('next-btn').style.opacity = (currentIdx === questionsDb.length - 1) ? "0.4" : "1";
+
+            // If question has been answered previously, restore results UI immediately
+            const previousAnswer = userAnswers[q.id];
+            const discPanel = document.getElementById('discussion-panel');
+            if (previousAnswer) {
+                discPanel.classList.remove('hidden');
+                document.getElementById('discussion-text').innerHTML = q.discussion;
+                
+                // Style selection button states
+                q.choices.forEach(c => {
+                    const btn = document.getElementById(`choice-${c.key}`);
+                    if (btn) {
+                        btn.disabled = true;
+                        if (c.isCorrect) {
+                            btn.className = "w-full text-left p-4 rounded-2xl border-2 border-emerald-500 bg-emerald-50 flex items-center gap-3";
+                        } else if (c.key === previousAnswer.selectedKey) {
+                            btn.className = "w-full text-left p-4 rounded-2xl border-2 border-red-400 bg-red-50 flex items-center gap-3";
+                        }
+                    }
+                });
+            } else {
+                discPanel.classList.add('hidden');
+            }
+
+            // Sync visual states on layout
+            renderNumbersGrid();
+
+            // Re-run LaTeX math formatting engines
+            if (window.MathJax) {
+                MathJax.typesetPromise();
+            }
+        }
+
+        // Answer selections trigger logic
+        function selectAnswer(key) {
+            const q = questionsDb[currentIdx];
+            if (userAnswers[q.id]) return; // Already answered
+
+            const chosen = q.choices.find(c => c.key === key);
+            const isCorrect = !!chosen.isCorrect;
+
+            // Save state
+            userAnswers[q.id] = {
+                selectedKey: key,
+                isCorrect: isCorrect
+            };
+
+            // Update stats & XP
+            if (isCorrect) {
+                playSound('correct');
+                score += q.points;
+                document.getElementById('score-display').innerText = `${score} XP`;
+                showToast("✨ Jawabanmu BENAR! +10 XP!", "bg-[#10B981]");
+                triggerConfetti();
+            } else {
+                playSound('wrong');
+                showToast("❌ Kurang tepat, pelajari pembahasannya!", "bg-red-500");
+            }
+
+            // Render current changes instantly
+            loadQuestion(currentIdx);
+            updateAnalytics();
+        }
+
+        // Filter categories actions
+        function filterCategory(catId) {
+            playSound('click');
+            selectedCategory = catId;
+            
+            // Highlight buttons
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.className = "cat-btn bg-white hover:bg-gray-50 text-gray-700 text-left px-3 py-2 rounded-xl text-xs font-bold border-2 border-gray-200 transition-all";
+            });
+            
+            const activeBtn = document.getElementById(`btn-cat-${catId}`);
+            if (activeBtn) {
+                activeBtn.className = "cat-btn bg-emerald-500 text-white text-left px-3 py-2 rounded-xl text-xs font-bold border-2 border-emerald-500 transition-all";
+            }
+
+            // Move to first question matching that category
+            if (catId !== 'all') {
+                const targetQ = questionsDb.find(q => q.category === catId);
+                if (targetQ) {
+                    const idx = questionsDb.indexOf(targetQ);
+                    loadQuestion(idx);
+                }
+            } else {
+                loadQuestion(0);
+            }
+        }
+
+        // Calculate progress & scoring metrics
+        function updateAnalytics() {
+            const totalQuestions = questionsDb.length;
+            const answeredKeys = Object.keys(userAnswers);
+            const totalAnswered = answeredKeys.length;
+            
+            // Progress Bar
+            const percent = (totalAnswered / totalQuestions) * 100;
+            document.getElementById('overall-progress').style.width = `${percent}%`;
+            document.getElementById('completion-text').innerText = `${totalAnswered}/${totalQuestions} Terjawab`;
+
+            // Accuracy & Score counters
+            let correctCount = 0;
+            let wrongCount = 0;
+            answeredKeys.forEach(id => {
+                if (userAnswers[id].isCorrect) correctCount++;
+                else wrongCount++;
+            });
+
+            document.getElementById('stats-correct').innerText = correctCount;
+            document.getElementById('stats-wrong').innerText = wrongCount;
+            
+            const accuracy = totalAnswered > 0 ? Math.round((correctCount / totalAnswered) * 100) : 0;
+            document.getElementById('stats-accuracy').innerText = `${accuracy}%`;
+        }
+
+        function navigateQuestion(dir) {
+            playSound('click');
+            const nextIdx = currentIdx + dir;
+            if (nextIdx >= 0 && nextIdx < questionsDb.length) {
+                loadQuestion(nextIdx);
+            }
+        }
+
+        // --- 5. TOAST FEEDBACK ---
+        function showToast(text, bgClass) {
+            const toast = document.getElementById('toast');
+            const toastText = document.getElementById('toast-text');
+            toast.className = `fixed bottom-12 left-1/2 transform -translate-x-1/2 z-50 text-white font-black px-6 py-3 rounded-2xl shadow-xl flex items-center gap-2 animate-bounce ${bgClass}`;
+            toastText.innerText = text;
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+
+        // --- 6. SCRATCHPAD (CANVAS) LOGIC ---
+        const sCanvas = document.getElementById('scratch-canvas');
+        const sCtx = sCanvas.getContext('2d');
+        let drawing = false;
+
+        function toggleScratchpad() {
+            playSound('click');
+            const pad = document.getElementById('scratchpad');
+            pad.classList.toggle('hidden');
+            if (!pad.classList.contains('hidden')) {
+                resizeCanvas();
+            }
+        }
+
+        function initScratchpad() {
+            // Mouse bindings
+            sCanvas.addEventListener('mousedown', (e) => {
+                drawing = true;
+                sCtx.beginPath();
+                const rect = sCanvas.getBoundingClientRect();
+                sCtx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+            });
+            sCanvas.addEventListener('mousemove', (e) => {
+                if (!drawing) return;
+                const rect = sCanvas.getBoundingClientRect();
+                sCtx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+                sCtx.stroke();
+            });
+            window.addEventListener('mouseup', () => drawing = false);
+
+            // Touch bindings (Mobile responsiveness)
+            sCanvas.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                drawing = true;
+                sCtx.beginPath();
+                const t = e.touches[0];
+                const rect = sCanvas.getBoundingClientRect();
+                sCtx.moveTo(t.clientX - rect.left, t.clientY - rect.top);
+            });
+            sCanvas.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+                if (!drawing) return;
+                const t = e.touches[0];
+                const rect = sCanvas.getBoundingClientRect();
+                sCtx.lineTo(t.clientX - rect.left, t.clientY - rect.top);
+                sCtx.stroke();
+            });
+            window.addEventListener('touchend', () => drawing = false);
+        }
+
+        function resizeCanvas() {
+            const parent = sCanvas.parentNode;
+            sCanvas.width = parent.clientWidth;
+            sCanvas.height = parent.clientHeight;
+            sCtx.lineCap = 'round';
+            sCtx.lineWidth = 3;
+            sCtx.strokeStyle = '#4F46E5'; // Indigo stroke lines
+        }
+
+        function clearCanvas() {
+            playSound('click');
+            sCtx.clearRect(0, 0, sCanvas.width, sCanvas.height);
+        }
+
+        // --- 7. CELEBRATIVE CONFETTI SYSTEM ---
+        const confettiCanvas = document.getElementById('confetti');
+        const confettiCtx = confettiCanvas.getContext('2d');
+        let confettiActive = false;
+        let particles = [];
+
+        function triggerConfetti() {
+            confettiActive = true;
+            confettiCanvas.classList.remove('hidden');
+            confettiCanvas.width = window.innerWidth;
+            confettiCanvas.height = window.innerHeight;
+            
+            particles = [];
+            for (let i = 0; i < 80; i++) {
+                particles.push({
+                    x: Math.random() * confettiCanvas.width,
+                    y: Math.random() * confettiCanvas.height - confettiCanvas.height,
+                    r: Math.random() * 5 + 4,
+                    d: Math.random() * confettiCanvas.height,
+                    color: `hsl(${Math.random() * 360}, 100%, 70%)`,
+                    tilt: Math.random() * 10 - 5,
+                    tiltAngleIncremental: Math.random() * 0.07 + 0.02,
+                    tiltAngle: 0
+                });
+            }
+
+            animateConfetti();
+            setTimeout(() => {
+                confettiActive = false;
+                confettiCanvas.classList.add('hidden');
+            }, 2500);
+        }
+
+        function animateConfetti() {
+            if (!confettiActive) return;
+            confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+            
+            particles.forEach((p, idx) => {
+                p.tiltAngle += p.tiltAngleIncremental;
+                p.y += (Math.cos(p.d) + 3 + p.r / 2) / 2;
+                p.x += Math.sin(p.tiltAngle);
+                p.tilt = Math.sin(p.tiltAngle - idx / 3) * 15;
+
+                confettiCtx.beginPath();
+                confettiCtx.lineWidth = p.r;
+                confettiCtx.strokeStyle = p.color;
+                confettiCtx.moveTo(p.x + p.tilt + p.r / 2, p.y);
+                confettiCtx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r / 2);
+                confettiCtx.stroke();
+            });
+
+            requestAnimationFrame(animateConfetti);
+        }
+    </script>
+</body>
+</html>
